@@ -1,8 +1,21 @@
 class Solution {
-    //基本思路：
-    //维护连续有效字符计数器，有效标志
-    //扫描字符串，当无效时清空栈，存储计数值，并更新有效字符技术器，清空标志
+    //思路：如何记录当前状态，又能计算合法数。若直接两两相消，会忽略掉()()情况。需要一个记录最新的不合法的位置，每次扫到右括号更新最值和不合法位置
     public int longestValidParentheses(String s) {
-        
+        Stack<Integer> stack = new Stack<>();
+        stack.push(-1);
+        int maxLong = 0;
+        for(int i = 0; i < s.length(); i++){
+            if(s.charAt(i) == '('){
+                stack.push(i);
+            }else{
+                    stack.pop();
+                    if(stack.isEmpty()){//代表上一个有括号不是最新的不合法位置
+                        stack.push(i);
+                    }else{
+                        maxLong = Math.max(maxLong,i-stack.peek());
+                    }
+            }
+        }
+        return maxLong;
     }
 }
