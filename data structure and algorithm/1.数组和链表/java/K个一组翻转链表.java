@@ -1,4 +1,4 @@
-/**借助一个Pre节点，判断链表是否有k个节点，找区间翻转，贪心思想
+/**
  * Definition for singly-linked list.
  * public class ListNode {
  *     int val;
@@ -7,48 +7,58 @@
  * }
  */
 class Solution {
-    public ListNode reverseKGroup(ListNode head, int k) {
-        ListNode dummy = new ListNode(0);
-        dummy.next = head;
-        ListNode pre = dummy;
-		
-        while(this.hasKNodes(pre.next,k)){//判断从该节点开始是否有K个节点
-            ListNode start = pre.next;
-            ListNode end = null;
-            int count = 0;
-            ListNode travel = pre.next;
-			//找到翻转区间
-            while (travel != null && ++count < k){
-                travel = travel.next;
-            }
-            if(count == k){
-                end = travel;
-            }
-            ListNode preNode = travel.next;
-            ListNode curr = start;
-            ListNode endNext = end.next;
-            while(curr != endNext){
-                ListNode temp = curr.next;
-                curr.next = preNode;
-                preNode = curr;
-                curr = temp;
-            }
-            pre.next = end;
-            pre = start;
-        }
-        return dummy.next;
-        
+    public static class ExistK{
+        boolean exist;
+        ListNode node;
     }
-    public boolean hasKNodes(ListNode node, int k){
-        boolean result = false;
-        ListNode curr = node;
-        int count = 0;
-		//注意边界
-        while (curr != null && ++count < k){
-            curr = curr.next;
+    public ListNode reverseKGroup(ListNode head, int k) {
+        // k == 1不需要翻转
+        if (k == 1) {
+            return head;
         }
-        if (count == k){
-            result = true;
+        ListNode myHead = new ListNode();
+        myHead.next = head;
+        ListNode pre = myHead;
+        ListNode p = pre.next;
+
+        ExistK existK = existK(p,k);
+        boolean enough = existK.exist;
+        ListNode succ = existK.node;
+        while (enough){
+            pre.next = reverseSingleLink(p, k);
+            pre = p;
+            p = succ;
+            existK = existK(succ,k);
+            succ = existK.node;
+            enough = existK.exist;
+        }
+        pre.next = p;
+        return myHead.next;
+    }
+    // 翻转单链表并返回新的链表头
+    private ListNode reverseSingleLink(ListNode head, int k){
+        ListNode pre = head;
+        ListNode cur = pre.next;
+        for (int i = 0; i< k-1; i++){
+            ListNode next = cur.next;
+            cur.next = pre;
+            pre = cur;
+            cur = next;
+        }
+        return pre;
+    }
+    // 判断链表长度是否够K个,返回后继
+    private ExistK existK(ListNode head, int k){
+        ExistK result = new ExistK();
+        int num = 0;
+        ListNode node = head;
+        while (num < k && node != null){
+            node = node.next;
+            num++;
+        }
+        if (num == k){
+            result.exist = true;
+            result.node = node;
         }
         return result;
     }
