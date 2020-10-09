@@ -1,5 +1,5 @@
 
-//笨方法，但实用
+//笨方法，但实用, 借助优先级队列优化，，因为K固定
 //考虑分治法，该阶段暂不考虑
 class Solution {
     public ListNode mergeKLists(ListNode[] lists) {
